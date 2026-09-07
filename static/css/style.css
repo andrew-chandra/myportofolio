@@ -205,26 +205,58 @@ h1, .brand {
     font-size: 0.9rem;
 }
 
-.projects {
+.projects ul {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    list-style: none; 
+}
+
+.projects li {
+    background-color: var(--paper);
+    border: 1px solid var(--line);
+    padding: 0.8rem 1.2rem;
+    border-radius: var(--radius);
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+.education ul {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    list-style: none; 
+}
+
+.education li {
+    background-color: var(--paper);
+    border: 1px solid var(--line);
+    padding: 0.8rem 1.2rem;
+    border-radius: var(--radius);
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+.experiences {
     display: flex;
     flex-direction: column;
     gap: 1.25rem;
 }
 
-.projects article {
+.experiences article {
     background-color: #ffffff;
     border: 1px solid var(--line);
     border-radius: var(--radius);
     padding: 1.5rem;
 }
 
-.projects article h3 {
+.experiences article h3 {
     color: var(--accent-dark);
     margin-bottom: 0.5rem;
     font-size: 1.1rem;
 }
 
-.projects article p {
+.experiences article p {
     font-size: 0.9rem;
     color: var(--text-muted);
 }
