@@ -65,3 +65,17 @@ G:
 Jika kamu hanya menggunakan <div> di mana-mana (sering disebut div soup), kodenya tetap bisa dibuat cantik dengan CSS, tetapi browser akan melihatnya sebagai tumpukan kotak tanpa arti.
 
 Menggunakan elemen semantik seperti <article>, <ul>, dan <li> tidak hanya membuat kodemu lebih rapi dan profesional, tetapi juga langsung membantumu menjawab pertanyaan reflektif Tugas 1 mengenai pentingnya elemen semantik HTML5. -->
+
+
+### TUGAS 2
+1. Diawali dengan URL yang diketik di browser, kemudian server akan meneruskan request tersebut. File urls.py proyek akan mencocokan url yang diketik dan melempar kita ke page aplikasi yang sesuai, sedangkan urls.py aplikasi menerima url lalu melempar kita ke bagian view. File views.py berisi rangkuman data dalam bentuk model, data tsb berbentuk context yang bisa digunakan oleh template, models.py berurusan dengan data yang digunakan dalam portofolio, data tersebut akan dioper ke view, dan template menerima data dari view, lalu dirender ke browser.
+
+2. Jika data tidak disimpan pada models, maka tiap ada perubahan kita harus melakukan perubahan pada file HTML secara manual dan harus deploy ulang. Sedangkan dengan menggunakan model, perubahan data bisa dimodifikasi dengan lebih instan melalui django admin. Models juga memungkinkan kita untuk menampilkan banyak data menggunakan loop sehingga apabila datanya banyak, kita tidak harus ketik satu satu.
+
+3. makemigrations dilakukan untuk melihat perubahan pada file models.py, saya menyadari bahwa command tersebut bisa mendeteksi perubahan pada object class maupun atributnya, namun command ini tidak bersangkutan langsung dengan database. Sedangkan migrate biasanya dilakukan setelah makemigrations sebagai bentuk eksekusi supaya data yang kita buat bisa dikaitkan ke database. contohnya pada kasus yang saya kerjakan pada tugas 2 ini, saya menambahkan field kesanpesan pada class Education yang saya define, agar perubahannya bisa terwujud saya harus mengetik 2 command tsb (makemigrations dan migrate)
+
+### AI DISCLOSURE
+Saya menggunakan Gemini Pro sebagai troubleshooter saya ketika stuck, seperti gagal deploy dan minor fix ketika saya salah create instance (harusnya di education malah di experience), Gemini membantu saya untuk remove object yang saya buat melalui shell. Saya juga bertanya ke gemini cara untuk fix flexbox yang melebar setelah objek tsb di remove (ada perubahan pada file css dimana boxnya saya bagi rata agar tampilannya lebih rapi.)
+Untuk kerangka dan logika website saya purely mengerjakan sendiri!! (karena mengikuti arahan dari tutorial sebelumnya juga).
+
+link gemini: https://share.gemini.google/T2QZ6cqiCuvD
