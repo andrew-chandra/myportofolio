@@ -2,7 +2,7 @@ from django.test import TestCase
 from django.urls import reverse
 from django.utils import timezone
 
-from main.models import Experience
+from main.models import Experience, Education
 
 
 class MainTest(TestCase):
@@ -11,6 +11,12 @@ class MainTest(TestCase):
             title="Asisten Dosen PBP",
             description="Membantu mahasiswa memahami pengembangan web.",
             category="part-time",
+        )
+        # SETUP OBJEK EDUCATION
+        self.education = Education.objects.create(
+            title="SMA",
+            description="Sekolah Menengah Atas",
+            kesan="Mantap",
         )
 
     def test_main_url_is_accessible(self):
@@ -25,6 +31,23 @@ class MainTest(TestCase):
         response = self.client.get("/halaman-yang-tidak-ada/")
 
         self.assertEqual(response.status_code, 404)
+
+    #TES MODEL DAN OUTPUT DI WEB
+    def test_education_model(self):
+        self.assertEqual(str(self.education), "SMA")
+        self.assertEqual(self.education.kesan, "Mantap")
+        self.assertTrue(self.education.description, "Sekolah Menengah Atas")
+
+    def test_education_page(self):
+        response = self.client.get(reverse("main:show_education"))
+    
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, "education.html")
+        self.assertContains(response, self.education.title)
+        self.assertContains(response, self.education.description)
+        self.assertContains(response, "SMA")
+        self.assertContains(response, "Sekolah Menengah Atas")
+        self.assertContains(response, f'href="{reverse("main:show_main")}"')
 
     def test_experience_model(self):
         self.assertEqual(str(self.experience), "Asisten Dosen PBP")
@@ -41,6 +64,13 @@ class MainTest(TestCase):
         self.assertContains(response, "Part-Time")
         self.assertContains(response, "Sedang berlangsung")
         self.assertContains(response, f'href="{reverse("main:show_main")}"')
+
+    #TES PAGE KOSONG
+    def test_empty_education_page(self):
+        Education.objects.all().delete()
+        response = self.client.get(reverse("main:show_education"))
+
+        self.assertContains(response, "Belum ada pengalaman yang ditambahkan.")
 
     def test_empty_experience_page(self):
         Experience.objects.all().delete()
