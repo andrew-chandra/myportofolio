@@ -81,6 +81,8 @@ STATIC_ROOT = BASE_DIR / 'staticfiles'
 WHITENOISE_USE_FINDERS = True
 
 WSGI_APPLICATION = 'portofolio.wsgi.application'
+#TUTORIAL3
+CSRF_TRUSTED_ORIGINS = ["https://andrew-chandra-myportofolio.pws.cs.ui.ac.id"]
 
 
 # Database
