@@ -79,3 +79,13 @@ Saya menggunakan Gemini Pro sebagai troubleshooter saya ketika stuck, seperti ga
 Untuk kerangka dan logika website saya purely mengerjakan sendiri!! (karena mengikuti arahan dari tutorial sebelumnya juga).
 
 link gemini: https://share.gemini.google/T2QZ6cqiCuvD
+
+### TUGAS 3
+1. Penggunaan ModelForm dalam Django akan lebih efisien dibandingkan membuat form HTML secara manual karena ModelForm dapat melakukannya secara otomatis, kita wajib menyertakan tag {% csrf_token %} pada form tersebut untuk melindungi data web dari luar yang mungkin mencoba mengirimkan request atas nama pengguna yang sedang aktif tanpa sepengetahuan mereka.
+
+2. Format JSON lebih disukai dibandingkan XML karena formatnya yang jauh lebih ringkas, JSON juga kompatibel dengan JavaScript, yang memungkinkan data langsung dibaca di sisi frontend tanpa repot-repot menambahkan parser.
+
+3. Alur pengembalian data portofolio dalam bentuk JSON dimulai saat klien mengakses endpoint URL API, di mana fungsi view akan mengambil data dari database menggunakan Django. Sebelum data tersebut dikembalikan, kita perlu melakukan proses serialization untuk menerjemahkan objek model Python yang kompleks menjadi teks berstandar JSON, data yang sudah berformat JSON tersebut dibungkus ke dalam objek HttpResponse dengan tipe konten application/json agar dapat diproses oleh klien.
+
+### AI DISCLOSURE
+Saya menggunakan Gemini Pro sebagai troubleshooter, pada pengerjaan tugas 3 saya mengalami beberapa error sintaks yang mengakibatkan saya menjadi stuck, Gemini membantu saya untuk mencari masalah masalah yang saya buat seperti typo pada variabel dan logika CRUD yang sempat gagal.
