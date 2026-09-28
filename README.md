@@ -89,3 +89,11 @@ link gemini: https://share.gemini.google/T2QZ6cqiCuvD
 
 ### AI DISCLOSURE
 Saya menggunakan Gemini Pro sebagai troubleshooter, pada pengerjaan tugas 3 saya mengalami beberapa error sintaks yang mengakibatkan saya menjadi stuck, Gemini membantu saya untuk mencari masalah masalah yang saya buat seperti typo pada variabel dan logika CRUD yang sempat gagal.
+
+
+### TUGAS 4
+
+### AI DISCLOSURE
+Saya menggunakan gemini flash-lite, untuk masalah togglestar, gemini membantu saya mengoreksi dan menyarankan saya untuk membuat 4 fungsi terpisah untuk meng-star masing masing entity. gemini juga membantu saya dalam pembuatan entity editor, walaupun agak overshare (conditionals pada file-file HTML sudah saya pahami sebelum gemini kasitau heheh), gemininya juga bantu saya pada syntax error di views.py pada pengecekan is_editor.
+
+https://share.gemini.google/NQ8kvjTjxaLb
