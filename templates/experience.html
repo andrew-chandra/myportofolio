@@ -9,12 +9,14 @@
             <p class="section-kicker">Experience</p>
             <div class="education-header">
                 <h1>Experience</h1>
-                <a href="{% url 'main:create_experience' %}"
-                    class="button education-add-button">
-                    <span aria-hidden="true">+</span>
-                    Tambah Pengalaman
-            </a>
-        </div>
+                {% if user.is_superuser %}
+                    <a href="{% url 'main:create_projects' %}"
+                        class="button education-add-button">
+                        <span aria-hidden="true">+</span>
+                        Tambah Pengalaman
+                    </a>
+                {% endif %}
+            </div>
         <form method="get"
                       action="{% url 'main:show_experience' %}"
                       class="education-search">
@@ -38,7 +40,10 @@
                         </p>
                         <div class="education-card-actions">
                             <div class="education-actions">
-                                {% include "components/experience_delete_modal.html" with experience=experience %}
+                                {% include "components/experience_star.html" with experience=experience %}
+                                {% if user.is_superuser %}
+                                    {% include "components/experience_delete_modal.html" with experience=experience %}
+                                {% endif %}                      
                             </div>
                         </div>
                     </article>

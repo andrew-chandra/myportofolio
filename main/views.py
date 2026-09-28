@@ -14,10 +14,95 @@ from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 from django.contrib.auth.decorators import login_required 
 from django.core.exceptions import PermissionDenied        
 
+
+##TUGAS 4
+def get_educations_json(request):
+    title_query = request.GET.get("title", "").strip()
+    educations = Education.objects.all()
+
+    if title_query:
+        educations = educations.filter(description__icontains=title_query)
+
+    educations_json = serializers.serialize("json", educations, use_natural_foreign_keys=True)
+    return HttpResponse(educations_json, content_type="application/json")
+
+def get_experiences_json(request):
+    title_query = request.GET.get("title", "").strip()
+    experiences = Experience.objects.all()
+
+    if title_query:
+        experiences = experiences.filter(title__icontains=title_query)
+
+    experiences_json = serializers.serialize("json", experiences, use_natural_foreign_keys=True)
+    return HttpResponse(experiences_json, content_type="application/json")
+
+def get_skills_json(request):
+    title_query = request.GET.get("title", "").strip()
+    skills = Skills.objects.all()
+
+    if title_query:
+        skills = skills.filter(title__icontains=title_query)
+
+    skills_json = serializers.serialize("json", skills, use_natural_foreign_keys=True)
+    return HttpResponse(skills_json, content_type="application/json")
+
+def get_projects_json(request):
+    title_query = request.GET.get("title", "").strip()
+    projects = Projects.objects.all()
+
+    if title_query:
+        projects = projects.filter(title__icontains=title_query)
+
+    # projects_json = serializers.serialize("json", projects) sebelum
+    projects_json = serializers.serialize("json", projects, use_natural_foreign_keys=True)  # sesudah
+    return HttpResponse(projects_json, content_type="application/json")
+
+@login_required(login_url="/login/")
+def toggle_starEducation(request, education_id):
+    education = get_object_or_404(Education, pk=education_id)
+
+    if request.method == "POST":
+        # Kalau akun ini sudah pernah memberi star, batalkan star-nya.
+        # Kalau belum, tambahkan star.
+        if request.user in education.starred_by.all():
+            education.starred_by.remove(request.user)
+        else:
+            education.starred_by.add(request.user)
+
+    return redirect("main:show_education")
+
+@login_required(login_url="/login/")
+def toggle_starExperience(request, experience_id):
+    experience = get_object_or_404(Experience, pk=experience_id)
+
+    if request.method == "POST":
+        # Kalau akun ini sudah pernah memberi star, batalkan star-nya.
+        # Kalau belum, tambahkan star.
+        if request.user in experience.starred_by.all():
+            experience.starred_by.remove(request.user)
+        else:
+            experience.starred_by.add(request.user)
+
+    return redirect("main:show_experience")
+
+@login_required(login_url="/login/")
+def toggle_starSkills(request, skills_id):
+    skill = get_object_or_404(Skills, pk=skills_id)
+
+    if request.method == "POST":
+        # Kalau akun ini sudah pernah memberi star, batalkan star-nya.
+        # Kalau belum, tambahkan star.
+        if request.user in skill.starred_by.all():
+            skill.starred_by.remove(request.user)
+        else:
+            skill.starred_by.add(request.user)
+
+    return redirect("main:show_skills")
+
 ##TUTOR 4
 # Tanpa cek is_superuser: semua akun yang sudah login boleh memberi star
 @login_required(login_url="/login/")
-def toggle_star(request, project_id):
+def toggle_starProject(request, project_id):
     project = get_object_or_404(Projects, pk=project_id)
 
     if request.method == "POST":
@@ -80,7 +165,7 @@ def logout_user(request):
     response.delete_cookie('last_login')
     return response
 
-###TUTOR 3
+### tambahin login required untuk membatasi hak (hanya user dari django admin yang bisa)
 @login_required(login_url="/login/")
 def create_Education(request):
     if not request.user.is_superuser:
@@ -99,11 +184,10 @@ def create_Education(request):
     }
     return render(request, "education_form.html", context)
 
-###TUGAS 3
 @login_required(login_url="/login/")
 def create_Experience(request):
     if not request.user.is_superuser:
-            raise PermissionDenied
+        raise PermissionDenied
         
     form = ExperienceForm(request.POST or None)
 
@@ -121,7 +205,7 @@ def create_Experience(request):
 @login_required(login_url="/login/")
 def create_Skills(request):
     if not request.user.is_superuser:
-            raise PermissionDenied
+        raise PermissionDenied
         
     form = SkillsForm(request.POST or None)
 
@@ -139,7 +223,7 @@ def create_Skills(request):
 @login_required(login_url="/login/")
 def create_Projects(request):
     if not request.user.is_superuser:
-            raise PermissionDenied
+        raise PermissionDenied
         
     form = ProjectsForm(request.POST or None)
 
@@ -157,7 +241,7 @@ def create_Projects(request):
 @login_required(login_url="/login/")
 def delete_education(request, education_id):
     if not request.user.is_superuser:
-            raise PermissionDenied
+        raise PermissionDenied
         
     education = get_object_or_404(Education, pk=education_id)
 
@@ -171,7 +255,7 @@ def delete_education(request, education_id):
 @login_required(login_url="/login/")
 def delete_experience(request, experience_id):
     if not request.user.is_superuser:
-            raise PermissionDenied
+        raise PermissionDenied
         
     experience = get_object_or_404(Experience, pk=experience_id)
 
@@ -185,7 +269,7 @@ def delete_experience(request, experience_id):
 @login_required(login_url="/login/")
 def delete_skills(request, skills_id):
     if not request.user.is_superuser:
-            raise PermissionDenied
+        raise PermissionDenied
         
     skills = get_object_or_404(Skills, pk=skills_id)
 
@@ -199,7 +283,7 @@ def delete_skills(request, skills_id):
 @login_required(login_url="/login/")
 def delete_projects(request, projects_id):
     if not request.user.is_superuser:
-            raise PermissionDenied
+        raise PermissionDenied
         
     projects = get_object_or_404(Projects, pk=projects_id)
 
@@ -209,50 +293,6 @@ def delete_projects(request, projects_id):
         return redirect("main:show_projects")
 
     return redirect("main:show_projects")
-
-def get_educations_json(request):
-    title_query = request.GET.get("title", "").strip()
-    educations = Education.objects.all()
-
-    if title_query:
-        educations = educations.filter(description__icontains=title_query)
-
-    educations_json = serializers.serialize("json", educations)
-    return HttpResponse(educations_json, content_type="application/json")
-
-def get_experiences_json(request):
-    title_query = request.GET.get("title", "").strip()
-    experiences = Experience.objects.all()
-
-    if title_query:
-        experiences = experiences.filter(title__icontains=title_query)
-
-    experiences_json = serializers.serialize("json", experiences)
-    return HttpResponse(experiences_json, content_type="application/json")
-
-def get_skills_json(request):
-    title_query = request.GET.get("title", "").strip()
-    skills = Skills.objects.all()
-
-    if title_query:
-        skills = skills.filter(title__icontains=title_query)
-
-    skills_json = serializers.serialize("json", skills)
-    return HttpResponse(skills_json, content_type="application/json")
-
-def get_projects_json(request):
-    title_query = request.GET.get("title", "").strip()
-    projects = Projects.objects.all()
-
-    if title_query:
-        projects = projects.filter(title__icontains=title_query)
-
-    # projects_json = serializers.serialize("json", projects) sebelum
-    projects_json = serializers.serialize("json", projects, use_natural_foreign_keys=True)  # sesudah
-    return HttpResponse(projects_json, content_type="application/json")
-
-
-
 
 def index(request):
     mahasiswas = Mahasiswa.objects.all()
