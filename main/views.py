@@ -16,6 +16,31 @@ from django.core.exceptions import PermissionDenied
 
 
 ##TUGAS 4
+# Buat khusus editor dan superuser
+@login_required(login_url="/login/")
+def edit_projects(request, id):
+    # Cek dia editor atau bukan
+    is_editor = request.user.groups.filter(name='Editor').exists()
+    # Raise error jika bukan superuser atau bukan editor
+    if not (request.user.is_superuser or is_editor):
+        raise PermissionDenied
+    
+    project = get_object_or_404(Projects, pk=id)
+
+    form = ProjectsForm(request.POST or None, instance=project)
+
+    if request.method == "POST" and form.is_valid():
+        form.save()
+        messages.success(request, "Proyek berhasil diperbarui!")
+        return redirect("main:show_projects")
+
+    context = {
+        "name": "Andrew Chandra Halim",
+        "form": form,
+        "project": project,
+    }
+    return render(request, "edit_projects.html", context)
+
 def get_educations_json(request):
     title_query = request.GET.get("title", "").strip()
     educations = Education.objects.all()
@@ -362,27 +387,17 @@ def show_projects(request):
         json_response.content.decode("utf-8"),
     )
     projects = [project.object for project in projects]
+ 
+    if request.user.is_authenticated:  # Cek apakah user sudah login
+        is_editor = request.user.groups.filter(name="Editor").exists() # Cek apakah dia masuk Editor pada groups di django
+    else:
+        is_editor = False
+    
     title_query = request.GET.get("title", "").strip()
     context = {
         "name": "Andrew Chandra Halim",
         "projects_list": projects,
         "title_query": title_query,
+        "is_editor": is_editor,
     }
     return render(request, "projects.html", context)
-
-def edit_projects(request, id):
-    project = get_object_or_404(Projects, pk=id)
-
-    form = ProjectsForm(request.POST or None, instance=project)
-
-    if request.method == "POST" and form.is_valid():
-        form.save()
-        messages.success(request, "Proyek berhasil diperbarui!")
-        return redirect("main:show_projects")
-
-    context = {
-        "name": "Andrew Chandra Halim",
-        "form": form,
-        "project": project,
-    }
-    return render(request, "edit_projects.html", context)

@@ -40,9 +40,13 @@
                         </p>
                         <div class="education-card-actions">
                             <div class="education-actions">
+                                <!-- NAMBAHIN SUPAYA EDIT BUTTON CUMA ADA DI ADMIN SAJAH ATAU EDITOR TUGAS4 -->
+                                {% if user.is_superuser or is_editor %}
                                 <a href="{% url 'main:edit_projects' project.id %}" class="button button-secondary">
                                     Edit Proyek
                                 </a>
+                                {% endif %}
+
                                 {% include "components/project_star.html" with project=project %}
                                 {% if user.is_superuser %}
                                     {% include "components/projects_delete_modal.html" with project=project %}
