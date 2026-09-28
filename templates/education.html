@@ -9,12 +9,14 @@
             <p class="section-kicker">Pendidikan</p>
             <div class="education-header">
                 <h1>Education</h1>
-                <a href="{% url 'main:create_education' %}"
-                    class="button education-add-button">
-                    <span aria-hidden="true">+</span>
-                    Tambah Education
-            </a>
-        </div>
+                {% if user.is_superuser %}
+                    <a href="{% url 'main:create_projects' %}"
+                        class="button education-add-button">
+                        <span aria-hidden="true">+</span>
+                        Tambah Sekolah
+                    </a>
+                {% endif %}
+            </div>
         <form method="get"
                       action="{% url 'main:show_education' %}"
                       class="education-search">
@@ -38,7 +40,10 @@
                         </p>
                         <div class="education-card-actions">
                             <div class="education-actions">
-                                {% include "components/education_delete_modal.html" with education=education %}
+                                {% include "components/education_star.html" with education=education %}
+                                {% if user.is_superuser %}
+                                    {% include "components/education_delete_modal.html" with education=education %}
+                                {% endif %}
                             </div>
                         </div>
                     </article>

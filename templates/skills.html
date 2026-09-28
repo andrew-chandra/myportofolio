@@ -9,12 +9,14 @@
             <p class="section-kicker">Skills</p>
             <div class="education-header">
                 <h1>Skills</h1>
-                <a href="{% url 'main:create_skills' %}"
-                    class="button skills-add-button">
-                    <span aria-hidden="true">+</span>
-                    Tambah Skill
-            </a>
-        </div>
+                {% if user.is_superuser %}
+                    <a href="{% url 'main:create_projects' %}"
+                        class="button education-add-button">
+                        <span aria-hidden="true">+</span>
+                        Tambah Skill
+                    </a>
+                {% endif %}
+            </div>
         <form method="get"
                       action="{% url 'main:show_skills' %}"
                       class="education-search">
@@ -38,7 +40,10 @@
                         </p>
                         <div class="education-card-actions">
                             <div class="education-actions">
-                                {% include "components/skills_delete_modal.html" with skills=skills %}
+                                {% include "components/skills_star.html" with skills=skills %}
+                                {% if user.is_superuser %}
+                                    {% include "components/skills_delete_modal.html" with skills=skills %}
+                                {% endif %}                                
                             </div>
                         </div>
                     </article>

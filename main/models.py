@@ -2,6 +2,7 @@ import uuid
 from django.db import models
 from django.contrib.auth.models import User
 
+
 # Create your models here.
 class Mahasiswa(models.Model):
     nama = models.CharField(max_length=30)
@@ -9,17 +10,11 @@ class Mahasiswa(models.Model):
 
     def __str__(self):
         return self.nama
-
-class Experience(models.Model):
-    # EXPERIENCE_CHOICES = [
-    #     ('internship', 'Internship'),
-    #     ('research', 'Research'),
-    #     ('volunteer', 'Volunteer'),
-    #     ('part-time', 'Part-Time'),
-    #     ('full-time', 'Full-Time'),
-    #     ('freelance', 'Freelance'),
-    # ]
     
+# TUGAS 4 (buat semua page starrable)
+class Experience(models.Model):
+    starred_by = models.ManyToManyField(User, related_name="starred_experience", blank=True)
+
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     title = models.CharField(max_length=255)
     description = models.TextField()
@@ -36,6 +31,8 @@ class Experience(models.Model):
 ### TUGAS 2 NAMBAHIN MODELS UNTUK SKILLS, EDUCATION, DAN PROJECTS
 
 class Skills(models.Model):    
+    starred_by = models.ManyToManyField(User, related_name="starred_skills", blank=True)
+
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     title = models.CharField(max_length=255)
     description = models.TextField()
@@ -50,7 +47,9 @@ class Skills(models.Model):
     # def is_ongoing(self):
     #     return self.ended_at is None
 
-class Education(models.Model):    
+class Education(models.Model):   
+    starred_by = models.ManyToManyField(User, related_name="starred_Education", blank=True)
+ 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     title = models.CharField(max_length=255)
     description = models.TextField() #buat naro tahun masuk dan tahun lulus
