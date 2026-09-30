@@ -1,5 +1,5 @@
 from django.urls import path
-from main.views import index, show_main, show_experience, show_education, show_projects, show_skills, create_Education, create_Experience, create_Projects, create_Skills, get_educations_json, get_experiences_json, get_skills_json, get_projects_json, delete_education, delete_experience, delete_projects, delete_skills, edit_projects, register, login_user, logout_user, toggle_starProject, toggle_starEducation, toggle_starSkills, toggle_starExperience
+from main.views import index, show_main, show_experience, show_education, show_projects, show_skills, create_Education, create_Experience, create_Projects, create_Skills, get_educations_json, get_experiences_json, get_skills_json, get_projects_json, delete_education, delete_experience, delete_projects, delete_skills, edit_projects, register, login_user, logout_user, toggle_starProject, toggle_starEducation, toggle_starSkills, toggle_starExperience, create_project_ajax
 
 app_name = 'main'
 
@@ -10,6 +10,8 @@ urlpatterns = [
     path("education/", show_education, name="show_education"),
     path("projects/", show_projects, name="show_projects"),
     path("skills/", show_skills, name="show_skills"),
+    #TUT 5
+    path("projects/add-ajax/", create_project_ajax, name="create_project_ajax"),
     # TUGAS 4
     path("register/", register, name="register"),
     path("login/", login_user, name="login"),

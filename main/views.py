@@ -4,7 +4,7 @@ from .models import Experience
 from .models import Education
 from .models import Skills
 from .models import Projects
-from .forms import EducationForm, ExperienceForm, ProjectsForm, SkillsForm
+from .forms import EducationForm, ExperienceForm, ProjectForm, SkillsForm
 from django.contrib import messages
 from django.core import serializers
 from django.http import HttpResponse
@@ -12,7 +12,110 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.contrib.auth import login, logout
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 from django.contrib.auth.decorators import login_required 
-from django.core.exceptions import PermissionDenied        
+from django.core.exceptions import PermissionDenied
+from django.views.decorators.http import require_POST
+from django.http import JsonResponse
+from main.forms import ProjectForm
+
+## TUT5
+@require_POST
+def create_project_ajax(request):
+    if not request.user.is_superuser:
+        return JsonResponse(
+            {"message": "Hanya pemilik portofolio yang dapat menambahkan proyek."},
+            status=403,
+        )
+
+    form = ProjectForm(request.POST)
+    if form.is_valid():
+        project = form.save()
+        return JsonResponse(
+            {"message": "Proyek berhasil ditambahkan.", "pk": str(project.id)},
+            status=201,
+        )
+
+    return JsonResponse({"errors": form.errors.get_json_data()}, status=400)
+
+def show_projects(request):
+    title_query = request.GET.get("title", "").strip()
+
+    is_editor = (
+        request.user.groups.filter(name="Editor").exists()
+        if request.user.is_authenticated
+        else False
+    )
+    context = {
+        "name": "Andrew Chandra Halim",
+        "title_query": title_query,
+        "form": ProjectForm(),
+        "is_editor": is_editor,
+    }
+    return render(request, "projects.html", context)
+
+# def show_projects(request):
+#     json_response = get_projects_json(request)
+
+#     projects = serializers.deserialize(
+#         "json",
+#         json_response.content.decode("utf-8"),
+#     )
+#     projects = [project.object for project in projects]
+ 
+#     if request.user.is_authenticated:  # Cek apakah user sudah login
+#         is_editor = request.user.groups.filter(name="Editor").exists() # Cek apakah dia masuk Editor pada groups di django
+#     else:
+#         is_editor = False
+    
+#     title_query = request.GET.get("title", "").strip()
+#     context = {
+#         "name": "Andrew Chandra Halim",
+#         "projects_list": projects,
+#         "title_query": title_query,
+#         "is_editor": is_editor,
+#     }
+#     return render(request, "projects.html", context)
+
+def get_projects_json(request):
+    title_query = request.GET.get("title", "").strip()
+    projects = Projects.objects.prefetch_related('starred_by').all()
+
+    if title_query:
+        projects = projects.filter(title__icontains=title_query)
+
+    # Konstruksi data JSON secara manual agar bisa menyisipkan logika Star
+    data = []
+    for project in projects:
+        starred_users = project.starred_by.all()
+        is_starred = request.user in starred_users if request.user.is_authenticated else False
+        starred_by_names = ", ".join([u.username for u in starred_users])
+
+        data.append({
+            "pk": str(project.id),
+            "fields": {
+                "title": project.title,
+                "description": project.description,
+                "category": project.category,
+                "thumbnail": project.thumbnail,
+                "started_at": project.started_at,
+                "ended_at": project.ended_at,
+                "star_count": starred_users.count(),
+                "is_starred": is_starred,
+                "starred_by_names": starred_by_names,
+            }
+        })
+
+    return JsonResponse(data, safe=False)
+
+# def get_projects_json(request):
+#     title_query = request.GET.get("title", "").strip()
+#     projects = Projects.objects.all()
+
+#     if title_query:
+#         projects = projects.filter(title__icontains=title_query)
+
+#     # projects_json = serializers.serialize("json", projects) sebelum
+#     projects_json = serializers.serialize("json", projects, use_natural_foreign_keys=True)  # sesudah
+#     return HttpResponse(projects_json, content_type="application/json")
 
 
 ##TUGAS 4
@@ -27,7 +130,7 @@ def edit_projects(request, id):
     
     project = get_object_or_404(Projects, pk=id)
 
-    form = ProjectsForm(request.POST or None, instance=project)
+    form = ProjectForm(request.POST or None, instance=project)
 
     if request.method == "POST" and form.is_valid():
         form.save()
@@ -70,17 +173,6 @@ def get_skills_json(request):
 
     skills_json = serializers.serialize("json", skills, use_natural_foreign_keys=True)
     return HttpResponse(skills_json, content_type="application/json")
-
-def get_projects_json(request):
-    title_query = request.GET.get("title", "").strip()
-    projects = Projects.objects.all()
-
-    if title_query:
-        projects = projects.filter(title__icontains=title_query)
-
-    # projects_json = serializers.serialize("json", projects) sebelum
-    projects_json = serializers.serialize("json", projects, use_natural_foreign_keys=True)  # sesudah
-    return HttpResponse(projects_json, content_type="application/json")
 
 @login_required(login_url="/login/")
 def toggle_starEducation(request, education_id):
@@ -250,7 +342,7 @@ def create_Projects(request):
     if not request.user.is_superuser:
         raise PermissionDenied
         
-    form = ProjectsForm(request.POST or None)
+    form = ProjectForm(request.POST or None)
 
     if request.method == "POST" and form.is_valid():
         form.save()
@@ -379,25 +471,3 @@ def show_skills(request):
     }
     return render(request, "skills.html", context)
 
-def show_projects(request):
-    json_response = get_projects_json(request)
-
-    projects = serializers.deserialize(
-        "json",
-        json_response.content.decode("utf-8"),
-    )
-    projects = [project.object for project in projects]
- 
-    if request.user.is_authenticated:  # Cek apakah user sudah login
-        is_editor = request.user.groups.filter(name="Editor").exists() # Cek apakah dia masuk Editor pada groups di django
-    else:
-        is_editor = False
-    
-    title_query = request.GET.get("title", "").strip()
-    context = {
-        "name": "Andrew Chandra Halim",
-        "projects_list": projects,
-        "title_query": title_query,
-        "is_editor": is_editor,
-    }
-    return render(request, "projects.html", context)
