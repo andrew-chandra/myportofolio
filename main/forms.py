@@ -1,5 +1,4 @@
-from django.forms import ModelForm, TextInput, Textarea, URLInput
-
+from django.forms import ModelForm, TextInput, Textarea
 from main.models import Education, Experience, Skills, Projects
 
 class EducationForm(ModelForm):
@@ -80,7 +79,7 @@ class ExperienceForm(ModelForm):
             )
         }
 
-class ProjectsForm(ModelForm):
+class ProjectForm(ModelForm):
     class Meta:
         model = Projects
         fields = [
