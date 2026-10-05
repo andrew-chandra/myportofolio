@@ -1,5 +1,7 @@
 from django.forms import ModelForm, TextInput, Textarea
 from main.models import Education, Experience, Skills, Projects
+from django.core.exceptions import ValidationError
+from django.utils.html import strip_tags
 
 class EducationForm(ModelForm):
     class Meta:
@@ -39,6 +41,14 @@ class EducationForm(ModelForm):
                 }
             )
         }
+    def clean_title(self):
+        title = strip_tags(self.cleaned_data["title"]).strip()
+        if not title:
+            raise ValidationError("Nama pendidikan tidak boleh hanya berisi tag HTML.")
+        return title
+
+    def clean_description(self):
+        return strip_tags(self.cleaned_data["description"]).strip()
 
 class ExperienceForm(ModelForm):
     class Meta:
@@ -117,6 +127,15 @@ class ProjectForm(ModelForm):
                 }
             )
         }
+    def clean_title(self):
+        title = strip_tags(self.cleaned_data["title"]).strip()
+        if not title:
+            raise ValidationError("Nama proyek tidak boleh hanya berisi tag HTML.")
+        return title
+
+    def clean_description(self):
+        return strip_tags(self.cleaned_data["description"]).strip()
+    
 
 class SkillsForm(ModelForm):
     class Meta:

@@ -97,3 +97,15 @@ Saya menggunakan Gemini Pro sebagai troubleshooter, pada pengerjaan tugas 3 saya
 Saya menggunakan gemini flash-lite, untuk masalah togglestar, gemini membantu saya mengoreksi dan menyarankan saya untuk membuat 4 fungsi terpisah untuk meng-star masing masing entity. gemini juga membantu saya dalam pembuatan entity editor, walaupun agak overshare (conditionals pada file-file HTML sudah saya pahami sebelum gemini kasitau heheh), gemininya juga bantu saya pada syntax error di views.py pada pengecekan is_editor.
 
 https://share.gemini.google/NQ8kvjTjxaLb
+
+### TUGAS 5
+1. Berdasarkan modul tutorial 5, Debouncing adalah teknik menunda sebuah fungsi hingga suatu jeda waktu berlalu tanpa event baru. Contohnya saat menggunakan fungsi search, selama pengguna masih mengetik, timer sebelumnya dibatalkan dan dimulai lagi. Dengan demikian, browser hanya mengirim permintaan setelah pengguna berhenti mengetik selama sejenak. Alih-alih harus mengetik dan klik search (semakin banyak mengklik search semakin banyak request yang bisa bikin lag), dengan debouncing kita hanya mengetik saja hingga timer habis.
+
+2. Penggunaan keyword await pada fungsi async berfungsi untuk menunggu Promise dari fetch() selesai diproses sebelum program melanjutkan ke baris kode berikutnya, jika await tidak digunakan, sebuah promise akan tetap berjalan di belakang layar sementara kode-kode selanjutnya langsung dieksekusi tanpa menunggu hasil dari data tersebut, await dapat mencegah pembacaan data yang terlalu early (masih kosong) sehingga bisa mencegah error.
+
+3. XSS adalah sebuah serangan yang terjadi ketika penyerang berhasil menyisipkan kode JavaScript miliknya ke dalam suatu halaman web, yang nantinya akan ikut dijalankan pada browser milik pengguna lain. Alasan AJAX/JS lebih rentan adalah karena data yang disisipkan menggunakan AJAX tidak diescape secara otomatis. Hal ini menyebabkan browser memperlakukan setiap tag HTML atau skrip yang ada di dalam data tersebut sebagai kode sungguhan yang harus dieksekusi. Dengan autoescape browser hanya menampilkan karakter seperti < dan > diubah menjadi &lt; dan &gt; sebagai teks biasa tanpa mengeksekusinya sebagai kode.
+
+### AI DISCLOSURE
+Untuk  tugas 5, saya menggunakan Claude Sonnet 5.5, saya menggunakan AI karena saya sempat stuck saat menambahkan fitur pada modul Education, sehingga saya meminta Claude untuk diagnosa eror kodenya. Namun ternyata saya nemu sendiri kesalahannya dimana (kurang teliti heheh), saya juga bertanya kepada Claude kenapa ukuran tombol saya di modul A dan B berbeda.
+
+https://claude.ai/share/19094da3-550f-4ada-9e78-be203f27e897
