@@ -15,8 +15,63 @@ from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied
 from django.views.decorators.http import require_POST
 from django.http import JsonResponse
-from main.forms import ProjectForm
+from main.forms import ProjectForm, EducationForm
 
+## TUGAS5
+@require_POST
+def create_education_ajax(request):
+    if not request.user.is_superuser:
+        return JsonResponse(
+            {"message": "Hanya pemilik portofolio yang dapat menambahkan pendidikan."},
+            status=403,
+        )
+
+    form = EducationForm(request.POST)
+    if form.is_valid():
+        education = form.save()
+        return JsonResponse(
+            {"message": "Pendidikan berhasil ditambahkan.", "pk": str(education.id)},
+            status=201,
+        )
+
+    return JsonResponse({"errors": form.errors.get_json_data()}, status=400)
+
+def show_education(request):
+    title_query = request.GET.get("title", "").strip()
+
+    context = {
+        "name": "Andrew Chandra Halim",
+        "title_query": title_query,
+        "form": EducationForm(),
+    }
+    return render(request, "education.html", context)
+
+def get_educations_json(request):
+    title_query = request.GET.get("title", "").strip()
+    educations = Education.objects.prefetch_related('starred_by').all()
+
+    if title_query:
+        educations = educations.filter(title__icontains=title_query)
+
+    # Konstruksi data JSON secara manual agar bisa menyisipkan logika Star
+    data = []
+    for education in educations:
+        starred_users = education.starred_by.all()
+        is_starred = request.user in starred_users if request.user.is_authenticated else False
+        starred_by_names = ", ".join([u.username for u in starred_users])
+
+        data.append({
+            "pk": str(education.id),
+            "fields": {
+                "title": education.title,
+                "description": education.description,
+                "star_count": starred_users.count(),
+                "is_starred": is_starred,
+                "starred_by_names": starred_by_names,
+            }
+        })
+
+    return JsonResponse(data, safe=False)
 ## TUT5
 @require_POST
 def create_project_ajax(request):
@@ -143,16 +198,6 @@ def edit_projects(request, id):
         "project": project,
     }
     return render(request, "edit_projects.html", context)
-
-def get_educations_json(request):
-    title_query = request.GET.get("title", "").strip()
-    educations = Education.objects.all()
-
-    if title_query:
-        educations = educations.filter(description__icontains=title_query)
-
-    educations_json = serializers.serialize("json", educations, use_natural_foreign_keys=True)
-    return HttpResponse(educations_json, content_type="application/json")
 
 def get_experiences_json(request):
     title_query = request.GET.get("title", "").strip()
@@ -437,23 +482,6 @@ def show_experience(request):
     return render(request, "experience.html", context)
 
 ## EDIT UNTUK SEARCH
-def show_education(request):
-    json_response = get_educations_json(request)
-
-    educations = serializers.deserialize(
-        "json",
-        json_response.content.decode("utf-8"),
-    )
-    educations = [education.object for education in educations]
-    title_query = request.GET.get("title", "").strip()
-
-    context = {
-        "name": "Andrew Chandra Halim",
-        "education_list": educations,
-        "title_query": title_query,
-    }
-    return render(request, "education.html", context)
-
 def show_skills(request):
     json_response = get_skills_json(request)
 
