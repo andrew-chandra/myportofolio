@@ -5,9 +5,63 @@ from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APIClient, APITestCase
 
-from main.models import Projects  
+from main.models import Projects, Education
 
+#TUGAS6
+class EducationAPITest(APITestCase):
+    def setUp(self):
+        self.owner = User.objects.create_superuser(
+            username="owner", password="test-password", email="owner@example.com",
+        )
+        self.visitor = User.objects.create_user(username="visitor", password="test-password")
+        
+        self.editor = User.objects.create_user(username="editor_user", password="test-password")
+        editor_group, _ = Group.objects.get_or_create(name="Editor")
+        self.editor.groups.add(editor_group)
 
+        self.education = Education.objects.create(
+            title="SMA Negeri 1", description="2018 - 2021", kesan="Sangat berkesan"
+        )
+        self.list_url = reverse("api:education-list")
+        self.detail_url = reverse("api:education-detail", args=[self.education.id])
+        self.star_url = reverse("api:education-star", args=[self.education.id])
+        
+        self.payload = {
+            "title": "Universitas Indonesia",
+            "description": "2024 - Sekarang",
+            "kesan": "Mantap",
+            "thumbnail": "",
+        }
+
+    def test_public_list_and_detail(self):
+        response = self.client.get(self.list_url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data[0]["id"], str(self.education.id))
+        self.assertEqual(self.client.get(self.detail_url).status_code, status.HTTP_200_OK)
+
+    def test_editor_can_patch_but_not_create_or_delete(self):
+        self.client.force_authenticate(user=self.editor)
+        self.assertEqual(self.client.post(self.list_url, self.payload, format="json").status_code, 403)
+        response = self.client.patch(self.detail_url, {"kesan": "Updated kesan"}, format="json")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(self.client.delete(self.detail_url).status_code, 403)
+
+    def test_owner_can_manage(self):
+        self.client.force_authenticate(user=self.owner)
+        response = self.client.post(self.list_url, self.payload, format="json")
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        
+        detail_url = reverse("api:education-detail", args=[response.data["id"]])
+        self.assertEqual(self.client.delete(detail_url).status_code, status.HTTP_204_NO_CONTENT)
+
+    def test_star_requires_login(self):
+        self.assertEqual(self.client.post(self.star_url).status_code, status.HTTP_403_FORBIDDEN)
+        self.client.force_authenticate(user=self.visitor)
+        response = self.client.post(self.star_url)
+        self.assertTrue(response.data["is_starred"])
+        self.assertEqual(response.data["star_count"], 1)
+
+#TUT7
 class ProjectAPITest(APITestCase):
     def setUp(self):
         self.owner = User.objects.create_superuser(
