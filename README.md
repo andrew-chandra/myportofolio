@@ -109,3 +109,17 @@ https://share.gemini.google/NQ8kvjTjxaLb
 Untuk  tugas 5, saya menggunakan Claude Sonnet 5.5, saya menggunakan AI karena saya sempat stuck saat menambahkan fitur pada modul Education, sehingga saya meminta Claude untuk diagnosa eror kodenya. Namun ternyata saya nemu sendiri kesalahannya dimana (kurang teliti heheh), saya juga bertanya kepada Claude kenapa ukuran tombol saya di modul A dan B berbeda.
 
 https://claude.ai/share/19094da3-550f-4ada-9e78-be203f27e897
+
+### Tugas 6
+1. REST adalah gaya arsitektur perancangan web API yang memperlakukan data sebagai resource, memanfaatkan metode HTTP sesuai tindakan, dan melakukan pertukaran representasi data secara terstruktur, sehingga sekadar mengembalikan format JSON belum tentu membuat sebuah API menjadi RESTful jika prinsip pengaturannya tidak terpenuhi. Perbedaan utamanya terletak pada cakupan pengiriman datanya, di mana metode PUT digunakan untuk mengirim representasi pengganti secara penuh yang mengharuskan seluruh field wajib disertakan, sedangkan PATCH digunakan untuk partial update di mana klien hanya perlu mengirimkan field spesifik yang ingin diubah saja.
+
+2. Serializer pada DRF berperan penting dalam melakukan proses data, yaitu mengubah objek model menjadi tipe data python yang siap dirender ke JSON dengan serialization pada metode GET, serta memvalidasi dan membersihkan input mentah dari klien sebelum disimpan (deserialization). Keunggulannya dibandingkan merakit dictionary dengan JsonResponse adalah serializer bisa menangani validasi field secara otomatis, strip_tags, dan pengelolaan proses penyimpanan data dgn efisien tanpa perlu merakit respons berulang-ulang.
+
+3. Autentikasi berfungsi untuk mengenali identitas pengirim request, sedangkan otorisasi bertugas menentukan hak akses atau tindakan apa saja yang diizinkan untuk dilakukan oleh user tersebut. Pemeriksaan hak akses harus dilakukan di server menggunakan permission class karena pembatasan visual seperti hide tombol di template sisi klien tidak cukup untuk mengamankan aplikasi, karena pengguna tetap bisa mengirimkan request HTTP secara langsung ke endpoint API.
+
+4. Permintaan yang mengubah data (POST, PUT, PATCH, DELETE) memerlukan token CSRF ketika menggunakan SessionAuthentication supaya bisa melindungi aplikasi dari serangan CSRF terhadap sesi pengguna yang dikelola cookie. Penggunaan force_authenticate dalam pengujian tidak cukup untuk membuktikan perlindungan CSRF berjalan karena metode tersebut hanya memotong alur dengan menyisipkan objek pengguna secara langsung tanpa melakukan proses login nyata dan pemeriksaan token CSRF yang sebenarnya.
+
+### AI DISCLOSURE
+Untuk  tugas 6, saya menggunakan Gemini auto, saya menggunakan AI untuk membuat test case pada main/tests_api.py, hal ini saya lakukan untuk mempersingkat waktu sekaligus agar test case yang dibuat lebih mewakili mayoritas kode yang sudah ditulis (karena AI cenderung kreatif kalo buat test case :D).
+
+https://share.gemini.google/skyFMbz0DDSs
